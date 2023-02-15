@@ -57,6 +57,7 @@ const App = () => {
   const profileIconFemaleUrl = ('https://www.vhv.rs/dpng/d/426-4264903_user-avatar-png-picture-avatar-profile-dummy-transparent.png')
   const profileIconMaleUrl = ('https://www.366icons.com/media/01/profile-avatar-account-icon-16699.png')
   
+  console.log(selectedUsers)
 
   return (
     <div className='App-header '>
