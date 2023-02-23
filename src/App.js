@@ -31,9 +31,10 @@ const App = () => {
 
   const handleDownload = () => {
     // Convert selected users data to CSV format
-    const csvData = selectedUsers
+    const csvData = 'Full Name,Age,Gender,Date of Birth,Email Id,Mobile Number,Enterprenuer Type,Expeted CTC,Experience Letter,Highest Qualification,Key Skills,Languages,Present Location,Pincode\n'+selectedUsers
       .map((userId) => {
         const user = userData.find((u) => u.emailId === userId);
+        
         return `${user.name},${user.age},${user.gender},${user.dob},${user.emailId},${user.mobileNum},${user.enterpreneurType},${user.expectedCtc},${user.experienceLetter},${user.highestQualification},${user.keySkills},${user.languages},${user.presentLocation},${user.pincode},`;
       })
       .join('\n');
