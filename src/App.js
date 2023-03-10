@@ -5,18 +5,19 @@ import { saveAs } from 'file-saver';
 import './App.css'
 
 const App = () => {
-  const [maxUsers,setMaxUsers] = useState(5);
+
   const [amount, setAmount] = useState('');
   const [clientSecret, setClientSecret] = useState('');
   const [recievedAmount,setReceivedAmount] = useState('');
   const [paymentStatus,setPaymentStatus] = useState(false)
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [userData, setUserData] = useState([])
 
   const handleAmountChange = (event) => {
     setAmount(event.target.value);
   };
 
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [userData, setUserData] = useState([])
+ 
 
   const fetchData=async()=>{
     const response = await fetch('https://get-excell-data.onrender.com/')
@@ -48,15 +49,49 @@ const App = () => {
 
 
   const handleUserSelect = (e) => {
-    const { checked, value } = e.target;
-    if (checked) {
-      setSelectedUsers((prevSelected) => [...prevSelected, value]);
-    } else {
-      setSelectedUsers((prevSelected) =>
-        prevSelected.filter((user) => user !== value)
-      );
+    if(paymentStatus){
+        const { checked, value } = e.target;
+      if (checked) {
+        if(selectedUsers.length < 5 && recievedAmount === '1'){
+          setSelectedUsers((prevSelected) => [...prevSelected, value]);
+        }
+        if(selectedUsers.length < 10 && recievedAmount === '2'){
+          setSelectedUsers((prevSelected) => [...prevSelected, value]);
+        }
+        
+      } else {
+        setSelectedUsers((prevSelected) =>
+          prevSelected.filter((user) => user !== value)
+        );
+      }
+    }else{
+      alert('Please Pay to get data')
     }
+    
   };
+
+  const handleSelectAll = (e) => {
+    if(paymentStatus){
+      if(e.target.checked){
+        const allUserIds = userData.map((user) => user.emailId);
+        setSelectedUsers(allUserIds);
+        }else{
+          setSelectedUsers([])
+        }
+    }else{
+      alert('Please Pay to get data')
+    }
+    
+  };
+  
+
+  const handleSelectAllMax5 = () => {
+    const newSelectedUsers = userData
+      .slice(0, 5) // Only select the first 5 users
+      .map(user => user.emailId);
+    setSelectedUsers(newSelectedUsers);
+  };
+
 
   const handleDownload = () => {
     // Convert selected users data to CSV format
@@ -80,19 +115,12 @@ const App = () => {
    
   };
 
-  const handleSelectAll = (e) => {
-    if(e.target.checked){
-    const allUserIds = userData.map((user) => user.emailId);
-    setSelectedUsers(allUserIds);
-    }else{
-      setSelectedUsers([])
-    }
-  };
+ 
  
   const profileIconFemaleUrl = ('https://www.vhv.rs/dpng/d/426-4264903_user-avatar-png-picture-avatar-profile-dummy-transparent.png')
   const profileIconMaleUrl = ('https://www.366icons.com/media/01/profile-avatar-account-icon-16699.png')
   
-  console.log(userData)
+  
   console.log(selectedUsers)
   console.log(clientSecret)
   console.log(recievedAmount)
@@ -103,8 +131,10 @@ const App = () => {
       return(
         <div className='App-header '>
           <h1 className='main-heading'>Download Users Data in Excel Format</h1>
-          <h1>Payment of 2 Success </h1>
-          <img src='https://img.freepik.com/premium-vector/transfer-money-concept-illustration_86047-117.jpg?w=740' alt='success-img' className='w-50'/>
+          <div className="success-payment">
+            <h4 className='text-success'>Payment Success Download 5 more users data</h4>
+            <img src='https://img.freepik.com/premium-vector/transfer-money-concept-illustration_86047-117.jpg?w=740' alt='success-img' className='w-25'/>
+          </div>
           <div className='button-container'>
         <div>
           <input
@@ -207,16 +237,20 @@ const App = () => {
       )
     }
     if(recievedAmount === '1'){
+      
       return(
         <div className='App-header '>
           <h1 className='main-heading'>Download Users Data in Excel Format</h1>
-          <img src='https://img.freepik.com/premium-vector/transfer-money-concept-illustration_86047-117.jpg?w=740' alt='success-img' className='w-50'/>
+          <div className="success-payment">
+            <h4 className='text-success'>Payment Success Download only Five users data</h4>
+            <img src='https://img.freepik.com/premium-vector/transfer-money-concept-illustration_86047-117.jpg?w=740' alt='success-img' className='w-25'/>
+          </div>
           <div className='button-container'>
         <div>
           <input
             type="checkbox"
             checked={selectedUsers.length === userData.length}
-            onChange={handleSelectAll}
+            onChange={handleSelectAllMax5}
           />
           <label>Export all Candiates dat to Excell</label>
         </div>
@@ -316,20 +350,24 @@ const App = () => {
     return (
       <div className='App-header '>
         <h1 className='main-heading'>Download Users Data in Excel Format</h1>
-        <label>
-          Amount (in rupees):
-          <input type="number" 
-          value={amount} 
-          onChange={handleAmountChange} 
-          placeholder="enter amount 1 or 2 rupees"
-          className="amount"/>
-        </label>
-        <StripeCheckout
-          stripeKey="pk_test_51MboFUSGJuyFqtziGcgR6PlblPb6Cyl5x8osGEdfjH4sxZ6QIkJ5HOVOta4cgh1a0bmSVxOo93cP1Dg7CqzwoO4E00Uds6N1Ai"
-          token={handlePayment}
-          amount={amount * 100}
-          currency="INR"
-        />
+        <p className='text-primary'>Pay one rupee for five users data</p>
+        <p className='text-primary'>Pay two rupees for five more users data</p>
+        <div>
+          <label>
+            Amount (in rupees):
+            <input type="number" 
+            value={amount} 
+            onChange={handleAmountChange} 
+            placeholder="Enter amount"
+            className="amount"/>
+          </label>
+          <StripeCheckout
+            stripeKey="pk_test_51MboFUSGJuyFqtziGcgR6PlblPb6Cyl5x8osGEdfjH4sxZ6QIkJ5HOVOta4cgh1a0bmSVxOo93cP1Dg7CqzwoO4E00Uds6N1Ai"
+            token={handlePayment}
+            amount={amount * 100}
+            currency="INR"
+          />
+        </div>
         <div className='button-container'>
         <div>
           <input

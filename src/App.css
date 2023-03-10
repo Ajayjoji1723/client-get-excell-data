@@ -108,3 +108,9 @@
   font-family: 'Roboto';
   font-size: 12px;
 }
+.success-payment{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
