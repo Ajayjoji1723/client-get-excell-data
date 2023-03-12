@@ -318,7 +318,7 @@ const App = () => {
               </div>
               <div className='item-container'>
                 <li className='li'>Mail Id</li>
-                <p className='sub-li'>[ {user.emailId.slice(0, -4).replace(/./g, 'x') + user.emailId.slice(-4)} ]</p>
+                <p className='sub-li'>[ {user.emailId.slice(0, -4).replace(/./g, 'X') + user.emailId.slice(-4)} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Mobile Number</li>
