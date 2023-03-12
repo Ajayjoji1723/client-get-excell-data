@@ -12,6 +12,7 @@ const App = () => {
   const [paymentStatus,setPaymentStatus] = useState(false)
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [userData, setUserData] = useState([])
+  const [close,setClose] = useState(false)
 
   const handleAmountChange = (event) => {
     setAmount(event.target.value);
@@ -41,6 +42,7 @@ const App = () => {
         setPaymentStatus(true)
         setClientSecret(response.data.clientSecret);
         setReceivedAmount(response.data.amount)
+        setClose(true)
       }
     } catch (err) {
       console.log(err);
@@ -52,13 +54,10 @@ const App = () => {
     if(paymentStatus){
         const { checked, value } = e.target;
       if (checked) {
-        if(selectedUsers.length < 5 && recievedAmount === '1'){
+        if(selectedUsers.length < 5 ){
           setSelectedUsers((prevSelected) => [...prevSelected, value]);
         }
-        if(selectedUsers.length < 10 && recievedAmount === '2'){
-          setSelectedUsers((prevSelected) => [...prevSelected, value]);
-        }
-        
+         
       } else {
         setSelectedUsers((prevSelected) =>
           prevSelected.filter((user) => user !== value)
@@ -125,125 +124,16 @@ const App = () => {
   console.log(clientSecret)
   console.log(recievedAmount)
   console.log(paymentStatus)
+  
+  const closeBtnCls = close ? 'popup' : 'popup-off'
 
-  if(paymentStatus ){
-    if(recievedAmount === '2'){
+  if(paymentStatus){
       return(
         <div className='App-header '>
           <h1 className='main-heading'>Download Users Data in Excel Format</h1>
-          <div className="success-payment">
-            <h4 className='text-success'>Payment Success Download 5 more users data</h4>
-            <img src='https://img.freepik.com/premium-vector/transfer-money-concept-illustration_86047-117.jpg?w=740' alt='success-img' className='w-25'/>
-          </div>
-          <div className='button-container'>
-        <div>
-          <input
-            type="checkbox"
-            checked={selectedUsers.length === userData.length}
-            onChange={handleSelectAll}
-          />
-          <label>Export all Candiates dat to Excell</label>
-        </div>
-        <button onClick={handleDownload} disabled={!selectedUsers.length} className="button" >
-          Get Excell Data
-        </button>
-      </div>
-      {userData.map((user) => (
-        <ul key={user.emailId} className="list-container">
-          <div className='main-container'>
-            <div className='left-card-container'>
-              <div className='input-container'>
-                <input
-                  type="checkbox"
-                  value={user.emailId}
-                  checked={selectedUsers.includes(user.emailId)}
-                  onChange={handleUserSelect}
-                />
-                <label>Export to Excell</label>
-              </div>
-              <div className='profile-container'>
-                {user.gender === 'Male'?(<img src={profileIconMaleUrl} className='w-25' alt={user.name}/>):(<img src={profileIconFemaleUrl} className="w-25" alt={user.name}/>)}
-                <h1 className='name'>{user.name}</h1>
-                <div className='sub-div'>
-                  <p className='p'>{user.gender}</p>
-                  <p className='p'>{user.age}</p>
-                  <p className='p'>{user.dob}</p>
-                </div>
-                <p className='mail'>{user.emailId}</p>
-              </div>
-            </div>
-            <div className='right-card-container'>
-              <div className='item-container'>
-                <li className='li'>Full Name</li>
-                <p className='sub-li'>[ {user.name} ]</p>
-              </div>
-              <div className='item-container'>
-                <li className='li'>Age</li>
-                <p className='sub-li'>[ {user.age} ]</p> 
-              </div>
-              <div className='item-container'>
-                <li className='li'>Gender</li>
-                <p className='sub-li'>[ {user.gender} ]</p>
-              </div>
-              <div className='item-container'>
-                <li className='li'>Date of Birth</li>
-                <p className='sub-li'>[ {user.dob} ]</p>
-              </div>
-              <div className='item-container'>
-                <li className='li'>Mail Id</li>
-                <p className='sub-li'>[ {user.emailId} ]</p>
-              </div>
-              <div className='item-container'>
-                <li className='li'>Mobile Number</li>
-                <p className='sub-li'>[ {user.mobileNum} ]</p>
-              </div>
-              <div className='item-container'>
-                <li className='li'>Enterprenuer Type</li>
-                <p className='sub-li'>[ {user.enterpreneurType} ]</p>
-              </div>
-              <div className='item-container'>
-                <li className='li'>Expected CTC</li>
-                <p className='sub-li'>[ {user.expectedCtc} ]</p>
-              </div>
-              <div className='item-container'>
-                <li className='li'>Experience Letter</li>
-                <p className='sub-li'>[ {user.experienceLetter} ]</p>
-              </div>
-              <div className='item-container'>
-                <li className='li'>Highest Qualification</li>
-                <p className='sub-li'>[ {user.highestQualification} ]</p>
-              </div>
-              <div className='item-container'>
-                <li className='li'>Key Skill</li>
-                <p className='sub-li'>[ {user.keySkills} ]</p>
-              </div>
-              <div className='item-container'>
-                <li className='li'>Languages</li>
-                <p className='sub-li'>[ {user.languages} ]</p>
-              </div>
-              <div className='item-container'>
-                <li className='li'>Present Location</li>
-                <p className='sub-li'>[ {user.presentLocation} ]</p>
-              </div>
-              <div className='item-container'>
-                <li className='li'>Pincode</li>
-                <p className='sub-li'>[ {user.pincode} ]</p>
-              </div>
-            </div>
-          </div>
-        </ul>
-      ))}
-        </div>
-      )
-    }
-    if(recievedAmount === '1'){
-      
-      return(
-        <div className='App-header '>
-          <h1 className='main-heading'>Download Users Data in Excel Format</h1>
-          <div className="success-payment">
-            <h4 className='text-success'>Payment Success Download only Five users data</h4>
-            <img src='https://img.freepik.com/premium-vector/transfer-money-concept-illustration_86047-117.jpg?w=740' alt='success-img' className='w-25'/>
+          <div className={closeBtnCls}>
+            <p className='text-success'>Payment successful!</p>
+            <button className='btn btn-success' onClick={()=>setClose(false)}>Done</button>
           </div>
           <div className='button-container'>
         <div>
@@ -252,7 +142,7 @@ const App = () => {
             checked={selectedUsers.length === userData.length}
             onChange={handleSelectAllMax5}
           />
-          <label>Export all Candiates dat to Excell</label>
+          <label>Export all Candidates data to Excell</label>
         </div>
         <button onClick={handleDownload} disabled={!selectedUsers.length} className="button" >
           Get Excell Data
@@ -345,13 +235,17 @@ const App = () => {
       ))}
         </div>
       )
-    }
+
   }else{
+    const displayUsers = paymentStatus ? userData : userData.map(user => {
+      const name = user.name.slice(0, -4).replace(/./g, 'x') + user.name.slice(-4);
+      return { ...user, name };
+    });
+
     return (
       <div className='App-header '>
         <h1 className='main-heading'>Download Users Data in Excel Format</h1>
-        <p className='text-primary'>Pay one rupee for five users data</p>
-        <p className='text-primary'>Pay two rupees for five more users data</p>
+
         <div>
           <label>
             Amount (in rupees):
@@ -375,13 +269,13 @@ const App = () => {
             checked={selectedUsers.length === userData.length}
             onChange={handleSelectAll}
           />
-          <label>Export all Candiates dat to Excell</label>
+          <label>Export all Candidates data to Excell</label>
         </div>
         <button onClick={handleDownload} disabled={!selectedUsers.length} className="button" >
           Get Excell Data
         </button>
       </div>
-      {userData.map((user) => (
+      {displayUsers.map((user) => (
         <ul key={user.emailId} className="list-container">
           <div className='main-container'>
             <div className='left-card-container'>
@@ -395,72 +289,72 @@ const App = () => {
                 <label>Export to Excell</label>
               </div>
               <div className='profile-container'>
-                {user.gender === 'Male'?(<img src={profileIconMaleUrl} className='w-25' alt={user.name}/>):(<img src={profileIconFemaleUrl} className="w-25" alt={user.name}/>)}
+                {user.gender === 'Male'?(<img src = {profileIconMaleUrl} className='w-25' alt={user.name}/>):(<img src={profileIconFemaleUrl} className="w-25" alt={user.name}/>)}
                 <h1 className='name'>{user.name}</h1>
                 <div className='sub-div'>
-                  <p className='p'>{user.gender}</p>
-                  <p className='p'>{user.age}</p>
-                  <p className='p'>{user.dob}</p>
+                  <p className='p'>{user.gender.toString().length > 4 ? user.gender.slice(0, -4).replace(/./g, 'X') + user.gender.slice(-4) : 'XXXX'}</p>
+                  <p className='p'>{user.age.toString().length > 4 ? user.age.toString().slice(-4) : 'XX'}</p>
+                  <p className='p'>{user.dob.length > 4 ? user.dob.slice(0, -4).replace(/./g, 'X') + user.dob.slice(-4) : 'XXXX'}</p>
                 </div>
-                <p className='mail'>{user.emailId}</p>
+                <p className='mail'>{user.emailId.slice(0, -4).replace(/./g, 'x') + user.emailId.slice(-4)}</p>
               </div>
             </div>
             <div className='right-card-container'>
               <div className='item-container'>
                 <li className='li'>Full Name</li>
-                <p className='sub-li'>[ {user.name} ]</p>
+                <p className='sub-li'>[ {user.name.toString().length > 4 ? user.name.slice(0, -4).replace(/./g, 'X') + user.name.slice(-4) : 'XXXX'} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Age</li>
-                <p className='sub-li'>[ {user.age} ]</p> 
+                <p className='sub-li'>[ {user.age.toString().length > 4 ? user.age.toString().slice(-4) : 'XX'} ]</p> 
               </div>
               <div className='item-container'>
                 <li className='li'>Gender</li>
-                <p className='sub-li'>[ {user.gender} ]</p>
+                <p className='sub-li'>[ {user.gender.toString().length > 4 ? user.gender.slice(0, -4).replace(/./g, 'X') + user.gender.slice(-4) : 'XXXX'} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Date of Birth</li>
-                <p className='sub-li'>[ {user.dob} ]</p>
+                <p className='sub-li'>[ {user.dob.length > 4 ? user.dob.slice(0, -4).replace(/./g, 'X') + user.dob.slice(-4) : 'XXXX'} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Mail Id</li>
-                <p className='sub-li'>[ {user.emailId} ]</p>
+                <p className='sub-li'>[ {user.emailId.slice(0, -4).replace(/./g, 'x') + user.emailId.slice(-4)} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Mobile Number</li>
-                <p className='sub-li'>[ {user.mobileNum} ]</p>
+                <p className='sub-li'>[ {user.mobileNum.toString().length > 4 ? user.mobileNum.toString().slice(0, -4).replace(/./g, 'X') + user.mobileNum.toString().slice(-4) : 'XXXX'} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Enterprenuer Type</li>
-                <p className='sub-li'>[ {user.enterpreneurType} ]</p>
+                <p className='sub-li'>[ {user.enterpreneurType.length >4 ? user.enterpreneurType.slice(0, -4).replace(/./g, 'X') + user.enterpreneurType.slice(-4) : 'XXXX'} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Expected CTC</li>
-                <p className='sub-li'>[ {user.expectedCtc} ]</p>
+                <p className='sub-li'>[ {user.expectedCtc.length >4 ? user.expectedCtc.slice(0, -4).replace(/./g, 'X') + user.expectedCtc.slice(-4) : 'XXXX'} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Experience Letter</li>
-                <p className='sub-li'>[ {user.experienceLetter} ]</p>
+                <p className='sub-li'>[ {user.experienceLetter.length >4 ? user.experienceLetter.slice(0, -4).replace(/./g, 'X') + user.experienceLetter.slice(-4) : 'XXXX'} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Highest Qualification</li>
-                <p className='sub-li'>[ {user.highestQualification} ]</p>
+                <p className='sub-li'>[ {user.highestQualification.length >4 ? user.highestQualification.slice(0, -4).replace(/./g, 'X') + user.highestQualification.slice(-4) : 'XXXX'} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Key Skill</li>
-                <p className='sub-li'>[ {user.keySkills} ]</p>
+                <p className='sub-li'>[ {user.keySkills.length >4 ? user.keySkills.slice(0, -4).replace(/./g, 'X') + user.keySkills.slice(-4) : 'XXXX'} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Languages</li>
-                <p className='sub-li'>[ {user.languages} ]</p>
+                <p className='sub-li'>[ {user.languages.length >4 ? user.languages.slice(0, -4).replace(/./g, 'X') + user.languages.slice(-4) : 'XXXX'} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Present Location</li>
-                <p className='sub-li'>[ {user.presentLocation} ]</p>
+                <p className='sub-li'>[ {user.presentLocation.length >4 ? user.presentLocation.slice(0, -4).replace(/./g, 'X') + user.presentLocation.slice(-4) : 'XXXX'} ]</p>
               </div>
               <div className='item-container'>
                 <li className='li'>Pincode</li>
-                <p className='sub-li'>[ {user.pincode} ]</p>
+                <p className='sub-li'>[ {user.pincode.toString().length > 4 ? user.pincode.toString().slice(0, -4).replace(/./g, 'X') + user.pincode.toString().slice(-4) : 'XXXX'} ]</p>
               </div>
             </div>
           </div>
